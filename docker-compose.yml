@@ -1,0 +1,33 @@
+version: '3.7'
+networks:
+  mongocrud-net:
+    driver: bridge
+    name: mongocrud-net
+services:
+  mongodb_container:
+    container_name: mongodb_container
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    networks:
+      - mongocrud-net
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+  crudbe:
+    container_name: crudbe
+    image: crudbe:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb_container
+    networks:
+      - mongocrud-net
+
+volumes:
+  mongodb_data_container:
